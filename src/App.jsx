@@ -139,7 +139,7 @@ class Homepage extends React.Component {
                 width: '20px',
                 height: '20px',
                 border: '1px solid black',
-                backgroundColor: 'green',
+                backgroundColor: index < reservedSeats ? 'grey' : 'green',
                 margin: '5px',
               }}
             ></div>
@@ -198,9 +198,13 @@ class TicketToRide extends React.Component {
         <h1>Ticket To Ride</h1>
 	      <div>
           <button onClick={() => this.setSelector('homepage')}>Homepage</button>
-          <button onClick={() => this.setSelector('display')}>Display Travellers</button>
-          <button onClick={() => this.setSelector('add')}>Add Traveller</button>
-          <button onClick={() => this.setSelector('delete')}>Delete Traveller</button>
+          {selector !== 'add' && (
+              <>
+                <button onClick={() => this.setSelector('display')}>Display Travellers</button>
+                <button onClick={() => this.setSelector('delete')}>Delete Traveller</button>
+              </>
+            )}
+            <button onClick={() => this.setSelector('add')}>Add Traveller</button>
         </div>
         <div>
           {/*Only one of the below four divisions is rendered based on the button clicked by the user.*/}
@@ -208,7 +212,7 @@ class TicketToRide extends React.Component {
             <Homepage totalSeats={totalSeats} travellers={travellers} />
           )}
           {selector === 'display' && <Display travellers={travellers} />}
-          {selector === 'add' && <Add bookTraveller={this.bookTraveller} nextId={nextId}/>}
+          {selector === 'add' && <Add bookTraveller={this.bookTraveller} nextId={nextId} />}
           {selector === 'delete' && <Delete deleteTraveller={this.deleteTraveller} />}
         </div>
       </div>
