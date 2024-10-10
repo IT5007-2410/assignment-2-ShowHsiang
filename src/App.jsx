@@ -104,23 +104,45 @@ class Homepage extends React.Component {
 	super();
 	}
 	render(){
-	return (
-	<div>
-		{/*Q2. Placeholder for Homepage code that shows free seats visually.*/}
-	</div>);
+    const { totalSeats, travellers } = this.props;
+    const reservedSeats = travellers.length;
+    const freeSeats = totalSeats - reservedSeats;
+	  return (
+      <div>
+        <h3>Seat Availability</h3>
+        <div style={{ display: 'flex', flexWrap: 'wrap', maxWidth: '200px' }}>
+          {[...Array(totalSeats)].map((_, index) => (
+            <div
+              key={index}
+              style={{
+                width: '20px',
+                height: '20px',
+                border: '1px solid black',
+                backgroundColor: 'green',
+                margin: '5px',
+              }}
+            ></div>
+          ))}
+        </div>
+        <p>Total Seats: {totalSeats}</p>
+        <p>Free Seats: {freeSeats}</p>
+      </div>
+	  );
 	}
 }
 class TicketToRide extends React.Component {
   constructor() {
     super();
-    this.state = { travellers: [], selector: 1};
+    this.state = { travellers: [], selector: 'homepage', totalSeats: 20 };
     this.bookTraveller = this.bookTraveller.bind(this);
     this.deleteTraveller = this.deleteTraveller.bind(this);
+    this.setSelector = this.setSelector.bind(this);
   }
 
   setSelector(value)
   {
   	/*Q2. Function to set the value of component selector variable based on user's button click.*/
+    this.setState({ selector: value });
   }
   componentDidMount() {
     this.loadData();
@@ -140,11 +162,15 @@ class TicketToRide extends React.Component {
 	  /*Q5. Write code to delete a passenger from the traveller state variable.*/
   }
   render() {
+    const { travellers, selector, totalSeats } = this.state;
     return (
       <div>
         <h1>Ticket To Ride</h1>
 	<div>
-	    {/*Q2. Code for Navigation bar. Use basic buttons to create a nav bar. Use states to manage selection.*/}
+    <button onClick={() => this.setSelector('homepage')}>Homepage</button>
+    <button onClick={() => this.setSelector('display')}>Display Travellers</button>
+    <button onClick={() => this.setSelector('add')}>Add Traveller</button>
+    <button onClick={() => this.setSelector('delete')}>Delete Traveller</button>
 	</div>
 	<div>
 		{/*Only one of the below four divisions is rendered based on the button clicked by the user.*/}
