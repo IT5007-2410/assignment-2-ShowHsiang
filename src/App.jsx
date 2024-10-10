@@ -73,7 +73,13 @@ class Add extends React.Component {
       age: form.age.value,
       bookingTime: new Date(),
     };
-    this.props.bookTraveller(newTraveller);
+    if (this.props.travellers.length >= this.props.totalSeats) {
+      alert('Cannot add traveller: All seats are booked.');
+    } else {
+      this.props.bookTraveller(newTraveller);
+      alert('Traveller added successfully.');
+      this.props.updateDisplay();
+    }
     form.travellername.value = '';
     form.phone.value = '';
     form.email.value = '';
@@ -105,7 +111,18 @@ class Delete extends React.Component {
     /*Q5. Fetch the passenger details from the deletion form and call deleteTraveller()*/
     const form = document.forms.deleteTraveller;
     const nameToDelete = form.travellername.value;
-    this.props.deleteTraveller(nameToDelete);
+    if (this.props.travellers.length === 0) {
+      alert('Cannot delete traveller: No travellers in the database.');
+    } else {
+      const travellerExists = this.props.travellers.some((traveller) => traveller.name.toLowerCase() === nameToDelete.toLowerCase());
+      if (!travellerExists) {
+        alert('Traveller not found in the database.');
+      } else {
+        this.props.deleteTraveller(nameToDelete);
+        alert('Traveller deleted successfully.');
+        this.props.updateDisplay();
+      }
+    }
     form.travellername.value = '';
   }
 
@@ -147,14 +164,24 @@ class Homepage extends React.Component {
         </div>
         <p>Total Seats: {totalSeats}</p>
         <p>Free Seats: {freeSeats}</p>
+        <div>
+        <div style={{ display: 'flex', alignItems: 'center', marginTop: '10px' }}>  
+          <div style={{ width: '20px', height: '20px', backgroundColor: 'grey', marginRight: '5px' }}></div>
+          <span>Reserved Seats</span>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', marginTop: '10px' }}>
+          <div style={{ width: '20px', height: '20px', backgroundColor: 'green', marginRight: '5px' }}></div>
+          <span>Free Seats</span>
+        </div>
       </div>
+    </div>
 	  );
 	}
 }
 class TicketToRide extends React.Component {
   constructor() {
     super();
-    this.state = { travellers: [], selector: 'homepage', totalSeats: 20, nextId: 3 };
+    this.state = { travellers: [], selector: 'homepage', totalSeats: 10, nextId: 3 };
     this.bookTraveller = this.bookTraveller.bind(this);
     this.deleteTraveller = this.deleteTraveller.bind(this);
     this.setSelector = this.setSelector.bind(this);
@@ -191,6 +218,9 @@ class TicketToRide extends React.Component {
       return { travellers: updatedTravellers };
     });
   }
+  updateDisplay() {
+    this.setState((prevState) => ({ travellers: [...prevState.travellers] }));
+  }
   render() {
     const { travellers, selector, totalSeats, nextId } = this.state;
     return (
@@ -198,13 +228,9 @@ class TicketToRide extends React.Component {
         <h1>Ticket To Ride</h1>
 	      <div>
           <button onClick={() => this.setSelector('homepage')}>Homepage</button>
-          {selector !== 'add' && (
-              <>
-                <button onClick={() => this.setSelector('display')}>Display Travellers</button>
-                <button onClick={() => this.setSelector('delete')}>Delete Traveller</button>
-              </>
-            )}
-            <button onClick={() => this.setSelector('add')}>Add Traveller</button>
+          <button onClick={() => this.setSelector('display')}>Display Travellers</button>
+          <button onClick={() => this.setSelector('add')}>Add Traveller</button>
+          <button onClick={() => this.setSelector('delete')}>Delete Traveller</button>
         </div>
         <div>
           {/*Only one of the below four divisions is rendered based on the button clicked by the user.*/}
@@ -212,8 +238,8 @@ class TicketToRide extends React.Component {
             <Homepage totalSeats={totalSeats} travellers={travellers} />
           )}
           {selector === 'display' && <Display travellers={travellers} />}
-          {selector === 'add' && <Add bookTraveller={this.bookTraveller} nextId={nextId} />}
-          {selector === 'delete' && <Delete deleteTraveller={this.deleteTraveller} />}
+          {selector === 'add' && <Add bookTraveller={this.bookTraveller} nextId={nextId} travellers={travellers} totalSeats={totalSeats} updateDisplay={this.updateDisplay} />}
+          {selector === 'delete' && <Delete deleteTraveller={this.deleteTraveller} travellers={travellers} updateDisplay={this.updateDisplay} />}
         </div>
       </div>
     );
