@@ -2,10 +2,14 @@
 const initialTravellers = [
   {
     id: 1, name: 'Jack', phone: 88885555,
+    email: 'jack@gmail.com',
+    age: 25,
     bookingTime: new Date(),
   },
   {
     id: 2, name: 'Rose', phone: 88884444,
+    email:'rose@gmail.com',
+    age: 22,
     bookingTime: new Date(),
   },
 ];
